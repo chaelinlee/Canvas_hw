@@ -14,7 +14,7 @@
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Stamp"/>
+            android:text="Stamp" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,24 +50,24 @@
             android:layout_height="wrap_content"
             android:text = "ROTATE"
             android:onClick="myClick"
-            android:id="@+id/rotate"/>
+            android:tag="rotate"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text = "MOVE"
             android:onClick="myClick"
-            android:id="@+id/move"/>
+            android:tag="move"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text = "SCALE"
             android:onClick="myClick"
-            android:id="@+id/scale"/>
+            android:tag="scale"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text = "SKEW"
             android:onClick="myClick"
-            android:id="@+id/skew"/>
+            android:tag="skew"/>
     </LinearLayout>
 </LinearLayout>

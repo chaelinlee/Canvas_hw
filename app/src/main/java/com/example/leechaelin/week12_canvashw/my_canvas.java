@@ -3,10 +3,14 @@ package com.example.leechaelin.week12_canvashw;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -20,21 +24,29 @@ public class my_canvas extends View {
     Paint mpaint = new Paint();
     String operationtype = "";
 
-    Boolean Checkbox_flag= false,Scale_flag=false,Skew_flag=false;
-    Boolean  Erase_flag= false,Open_flag=false,Save_flag=false,Rotate_flag=false,Move_flag=false;
+    Boolean Coloring_flag = false,red_flag= false,blue_flag = false;
+    Boolean Stamp_flag=false,Blurring_flag=false,Bigwidth_flag=false;
+
+    float[] matrixarray={2f,0f,0f,0f,-25f,
+            0f,2f,0f,0f,-25f,
+            0f,0f,2f,0f,-25f,
+            0f,0f,0f,1f,0f};
 
     public my_canvas(Context context) {
         super(context);
-        mpaint.setColor(Color.YELLOW);
+        mpaint.setColor(Color.BLACK);
+        this.setLayerType(LAYER_TYPE_SOFTWARE,null);
     }
 
     public my_canvas(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mpaint.setColor(Color.YELLOW);
+        mpaint.setColor(Color.BLACK);
+        this.setLayerType(LAYER_TYPE_SOFTWARE,null);
     }
 
     public void setOperationtype(String operationtype){
         this.operationtype= operationtype;
+        invalidate();
     }
 
     @Override
@@ -42,15 +54,57 @@ public class my_canvas extends View {
 
         super.onSizeChanged(w, h, oldw, oldh);
         mBitmap = Bitmap.createBitmap(w,h, Bitmap.Config.ARGB_8888);
+        //그림판? 판대기 자체
         mCanvas = new Canvas();
         mCanvas.setBitmap(mBitmap);
-
-        drawStamp(1,1);
+        mCanvas.drawColor(Color.YELLOW);
     }
 
     public void drawStamp(int x,int y){
+        mCanvas.save();
         Bitmap img = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);
+
+        if(Coloring_flag){
+            ColorMatrix matrix = new ColorMatrix(matrixarray);
+            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+            mpaint.setColorFilter(filter);
+        }else{
+            mpaint.setColorFilter(null);
+            //mpaint = new Paint();
+        }
+        if(Blurring_flag){
+            BlurMaskFilter blurring = new BlurMaskFilter(100, BlurMaskFilter.Blur.INNER);
+            mpaint.setMaskFilter(blurring);
+        }else{
+            mpaint = new Paint();
+        }
+
+        if(operationtype.equals("rotate")){
+            mCanvas.rotate(30,x,y);
+            mCanvas.drawBitmap(img,x,y,mpaint);
+            mCanvas.restore();
+            operationtype="";
+            return;
+        }
+        if(operationtype.equals("move")){
+            mCanvas.translate(100,100);
+            mCanvas.drawBitmap(img,x,y,mpaint);
+            mCanvas.restore();
+           operationtype="";
+            return;
+        }
+        if(operationtype.equals("scale")){
+
+        }
+        if(operationtype.equals("skew")){
+
+        }
+
+        x -= img.getWidth()/2;
+        y -= img.getHeight()/2;
+
         mCanvas.drawBitmap(img,x,y,mpaint);
+
     }
 
     @Override
@@ -58,27 +112,17 @@ public class my_canvas extends View {
         super.onDraw(canvas);
         if(mBitmap!=null)
             canvas.drawBitmap(mBitmap,0,0,mpaint);
-    }
 
+    }
 
     public void clear(){
         mBitmap.eraseColor(Color.WHITE);
         invalidate();
     }
-    public void rotate(){
-        mCanvas.rotate(45,this.getWidth()/2,this.getHeight()/2);
-    }
-    public void scale(){
-        mCanvas.scale(1.2f,1.2f);
-    }
-    public void skew(){
-        mCanvas.skew(0.3f,0.3f);
-    }
 
-    public void move(){
-        mCanvas.translate(10,10);
+    public Bitmap getmBitmap() {
+        return mBitmap;
     }
-
 
     int oldX = -1,oldY = -1;
 
@@ -86,32 +130,50 @@ public class my_canvas extends View {
     public boolean onTouchEvent(MotionEvent event) {
         int X = (int)event.getX();
         int Y = (int)event.getY();
-
-        if(event.getAction()==MotionEvent.ACTION_DOWN){
-            if(Checkbox_flag)
+        if(Stamp_flag){
+            if(event.getAction()==MotionEvent.ACTION_DOWN){
                 drawStamp(X,Y);
-            invalidate();
-
-            oldX = X;
-            oldY = Y;
-        }else if(event.getAction()==MotionEvent.ACTION_MOVE){
-            if(oldX != -1){
-                if(Checkbox_flag)
-                    mCanvas.drawLine(oldX,oldY,X,Y,mpaint);
                 invalidate();
+            }
+        }else{
+            if(Bigwidth_flag){
+                mpaint.setStrokeWidth(5);
+            }else{
+                mpaint.setStrokeWidth(3);
+            }
+            if(red_flag && blue_flag!=true) {
+                Log.d("red_flag",String.valueOf(red_flag));
+                Log.d("blue_flag",String.valueOf(blue_flag));
+                mpaint.setColor(Color.RED);
+            }
+            if(blue_flag && red_flag!=true) {
+                Log.d("red_flag",String.valueOf(red_flag));
+                Log.d("blue_flag",String.valueOf(blue_flag));
+                mpaint.setColor(Color.BLUE);
+            }
+            if(event.getAction()==MotionEvent.ACTION_DOWN){
                 oldX = X;
                 oldY = Y;
-            }
 
-
-        }else if(event.getAction()==MotionEvent.ACTION_UP){
-            if(oldX != -1){
-                if(Checkbox_flag)
+            }else if(event.getAction()==MotionEvent.ACTION_MOVE){
+                if(oldX != -1){
                     mCanvas.drawLine(oldX,oldY,X,Y,mpaint);
-                invalidate();
+                    invalidate();
+                    oldX = X;
+                    oldY = Y;
+                }
+
+
+            }else if(event.getAction()==MotionEvent.ACTION_UP){
+                if(oldX != -1){
+                    mCanvas.drawLine(oldX,oldY,X,Y,mpaint);
+                    invalidate();
+                }
+
+                oldX = -1;
+                oldY = -1;
             }
-            oldX = -1;
-            oldY = -1;
+
         }
 
         return true;

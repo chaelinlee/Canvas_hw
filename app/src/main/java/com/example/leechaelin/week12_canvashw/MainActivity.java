@@ -1,17 +1,31 @@
 package com.example.leechaelin.week12_canvashw;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class MainActivity extends AppCompatActivity {
     my_canvas my_canvas;
     CheckBox ck;
+    float[] matrixarray={2f,0f,0f,0f,-25f,
+            0f,2f,0f,0f,-25f,
+            0f,0f,2f,0f,-25f,
+            0f,0f,0f,1f,0f};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,61 +37,110 @@ public class MainActivity extends AppCompatActivity {
         ck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(ck.isChecked()==true){
-                    my_canvas.Checkbox_flag=true;
+                if(ck.isChecked()){
+                  my_canvas.Stamp_flag=true;
                 }else{
-                    my_canvas.Checkbox_flag=false;
+                    my_canvas.Stamp_flag=false;
                 }
+
             }
         });
     }
 
     public void myClick(View v){
-
-        if(v.getId()==R.id.erase){
-            my_canvas.clear();
-
-        }else if(v.getId()==R.id.rotate){
+        if(v.getTag()!=null){
+            my_canvas.setOperationtype((String)v.getTag());
             ck.setChecked(true);
-            my_canvas.rotate();
+            my_canvas.Stamp_flag=true;
+        }else{
+            if(v.getId()==R.id.erase){
+                my_canvas.clear();
+            }else if(v.getId()==R.id.open){
+                File f = new File(getFilesDir()+".jpg");
+                if(f.isFile()){
+                    my_canvas.clear();
+                    Bitmap img = BitmapFactory.decodeFile(getFilesDir()+".jpg");
+                    my_canvas.mCanvas.drawBitmap(img,img.getWidth()/2,img.getHeight()/2,null);
+                    //invalidate();
 
-        }else if(v.getId()==R.id.move){
-            ck.setChecked(true);
-            my_canvas.move();
-        }else if(v.getId()==R.id.scale){
-            ck.setChecked(true);
+                }else{
+                    Toast.makeText(getApplicationContext(),"그런 파일이 존재하지 않습니다.",Toast.LENGTH_SHORT).show();
+                }
+            }else if(v.getId()==R.id.save){
+                Bitmap save_img = my_canvas.getmBitmap();
+                try{
+                    FileOutputStream fs = new FileOutputStream(getFilesDir()+".jpg");
+                    save_img.compress(Bitmap.CompressFormat.JPEG,100,fs);
+                    fs.close();
+                    Toast.makeText(getApplicationContext(),"저장이 완료되었습니다!",Toast.LENGTH_SHORT).show();
 
-            my_canvas.scale();
-
-        }else if(v.getId()==R.id.skew){
-            ck.setChecked(true);
-            my_canvas.skew();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
-
 
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0,1,0,"Blurring").setCheckable(false);
-        menu.add(0,2,0,"Coloring").setCheckable(false);
-        menu.add(0,3,0,"Pen Width Big").setCheckable(false);
-        menu.add(0,4,0,"Pen Color Red");
-        menu.add(0,5,0,"Pen Color Blue");
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu,menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==1){
-            my_canvas.setOperationtype("Blurring");
-        }else if(item.getItemId()==2){
-            my_canvas.setOperationtype("Coloring");
-        }else if(item.getItemId()==3){
-            my_canvas.setOperationtype("Pen Width Big");
-        }else if(item.getItemId()==4){
-            my_canvas.setOperationtype("Pen Color Red");
-        }else if(item.getItemId()==5){
-            my_canvas.setOperationtype("Pen Color Blue");
+        if(item.getItemId()==R.id.menu1){
+            if(item.isChecked()){
+                item.setChecked(false);
+                my_canvas.Blurring_flag=false;
+
+            }else{
+                item.setChecked(true);
+                my_canvas.Blurring_flag=true;
+
+            }
+        }else if(item.getItemId()==R.id.menu2){
+            if(item.isChecked()){
+                item.setChecked(false);
+                my_canvas.Coloring_flag=false;
+
+            }else{
+                item.setChecked(true);
+                my_canvas.Coloring_flag=true;
+
+            }
+        }else if(item.getItemId()==R.id.menu3){
+            if(item.isChecked()){
+                item.setChecked(false);
+                my_canvas.Bigwidth_flag=false;
+            }else{
+                item.setChecked(true);
+                my_canvas.Bigwidth_flag=true;
+            }
+        }else if(item.getItemId()==R.id.menu4){
+            //팬 색깔 빨간색
+            my_canvas.blue_flag=false;
+            if(item.isChecked()){
+                item.setChecked(false);
+                my_canvas.red_flag=false;
+            }else{
+                item.setChecked(true);
+                my_canvas.red_flag=true;
+            }
+
+
+        }else if(item.getItemId()==R.id.menu5){
+            // 팬 색깔 파란색
+            my_canvas.red_flag=false;
+            if(item.isChecked()){
+                item.setChecked(false);
+                my_canvas.blue_flag=false;
+            }else{
+                item.setChecked(true);
+                my_canvas.blue_flag=true;
+            }
+
         }
         return super.onOptionsItemSelected(item);
     }

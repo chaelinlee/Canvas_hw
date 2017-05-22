@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title = "Blurring" android:id="@+id/menu1"
+        android:checkable="true"/>
+    <item android:title = "Coloring" android:id="@+id/menu2"
+        android:checkable="true"/>
+    <item android:title = "Pen with Big" android:id="@+id/menu3"
+        android:checkable="true"/>
+    <item android:title = "Pen with Red" android:id="@+id/menu4" />
+    <item android:title = "Pen with Blue" android:id="@+id/menu5"/>
+
+</menu>
