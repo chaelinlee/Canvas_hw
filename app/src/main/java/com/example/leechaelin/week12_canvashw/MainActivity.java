@@ -60,8 +60,11 @@ public class MainActivity extends AppCompatActivity {
                 if(f.isFile()){
                     my_canvas.clear();
                     Bitmap img = BitmapFactory.decodeFile(getFilesDir()+".jpg");
-                    my_canvas.mCanvas.drawBitmap(img,img.getWidth()/2,img.getHeight()/2,null);
-                    //invalidate();
+                    Bitmap simg = Bitmap.createScaledBitmap(img,img.getWidth()/2,img.getHeight()/2,false);
+                    int x = my_canvas.getWidth()/2 - simg.getWidth()/2;
+                    int y = my_canvas.getHeight()/2 - simg.getHeight()/2;
+                    my_canvas.mCanvas.drawBitmap(simg,x,y,null);
+
 
                 }else{
                     Toast.makeText(getApplicationContext(),"그런 파일이 존재하지 않습니다.",Toast.LENGTH_SHORT).show();
@@ -104,11 +107,11 @@ public class MainActivity extends AppCompatActivity {
             if(item.isChecked()){
                 item.setChecked(false);
                 my_canvas.Coloring_flag=false;
-
+                Log.d("coloring_flag",Boolean.toString(my_canvas.Coloring_flag));
             }else{
                 item.setChecked(true);
                 my_canvas.Coloring_flag=true;
-
+                Log.d("coloring_flag",Boolean.toString(my_canvas.Coloring_flag));
             }
         }else if(item.getItemId()==R.id.menu3){
             if(item.isChecked()){

@@ -69,8 +69,7 @@ public class my_canvas extends View {
             ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
             mpaint.setColorFilter(filter);
         }else{
-            mpaint.setColorFilter(null);
-            //mpaint = new Paint();
+            mpaint = new Paint();
         }
         if(Blurring_flag){
             BlurMaskFilter blurring = new BlurMaskFilter(100, BlurMaskFilter.Blur.INNER);
@@ -94,10 +93,24 @@ public class my_canvas extends View {
             return;
         }
         if(operationtype.equals("scale")){
+            mCanvas.scale(1.5f,1.5f);
+            float scaleX = img.getWidth()*1.5f;
+            float scaleY = img.getHeight()*1.5f;
 
+            Bitmap largeimg = Bitmap.createScaledBitmap(img,(int)scaleX,(int)scaleY,false);
+            x -= largeimg.getWidth()/2;
+            y -= largeimg.getHeight()/2;
+            mCanvas.drawBitmap(largeimg,x,y,mpaint);
+            mCanvas.restore();
+            operationtype="";
+            return;
         }
         if(operationtype.equals("skew")){
-
+            mCanvas.skew(0.2f,0.0f);
+            mCanvas.drawBitmap(img,x,y,mpaint);
+            mCanvas.restore();
+            operationtype="";
+            return;
         }
 
         x -= img.getWidth()/2;
