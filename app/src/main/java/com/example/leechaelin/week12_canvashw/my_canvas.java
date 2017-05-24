@@ -63,19 +63,17 @@ public class my_canvas extends View {
     public void drawStamp(int x,int y){
         mCanvas.save();
         Bitmap img = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);
+        Log.d("coloring",Boolean.toString(Coloring_flag));
 
         if(Coloring_flag){
             ColorMatrix matrix = new ColorMatrix(matrixarray);
             ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
             mpaint.setColorFilter(filter);
-        }else{
-            mpaint = new Paint();
         }
+
         if(Blurring_flag){
             BlurMaskFilter blurring = new BlurMaskFilter(100, BlurMaskFilter.Blur.INNER);
             mpaint.setMaskFilter(blurring);
-        }else{
-            mpaint = new Paint();
         }
 
         if(operationtype.equals("rotate")){
@@ -117,6 +115,8 @@ public class my_canvas extends View {
         y -= img.getHeight()/2;
 
         mCanvas.drawBitmap(img,x,y,mpaint);
+
+        mpaint = new Paint();
 
     }
 

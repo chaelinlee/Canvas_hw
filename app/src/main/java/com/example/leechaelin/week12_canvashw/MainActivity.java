@@ -107,11 +107,11 @@ public class MainActivity extends AppCompatActivity {
             if(item.isChecked()){
                 item.setChecked(false);
                 my_canvas.Coloring_flag=false;
-                Log.d("coloring_flag",Boolean.toString(my_canvas.Coloring_flag));
+
             }else{
                 item.setChecked(true);
                 my_canvas.Coloring_flag=true;
-                Log.d("coloring_flag",Boolean.toString(my_canvas.Coloring_flag));
+
             }
         }else if(item.getItemId()==R.id.menu3){
             if(item.isChecked()){
@@ -123,27 +123,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }else if(item.getItemId()==R.id.menu4){
             //팬 색깔 빨간색
+
+            my_canvas.red_flag=true;
             my_canvas.blue_flag=false;
-            if(item.isChecked()){
-                item.setChecked(false);
-                my_canvas.red_flag=false;
-            }else{
-                item.setChecked(true);
-                my_canvas.red_flag=true;
-            }
-
-
         }else if(item.getItemId()==R.id.menu5){
             // 팬 색깔 파란색
+            my_canvas.blue_flag=true;
             my_canvas.red_flag=false;
-            if(item.isChecked()){
-                item.setChecked(false);
-                my_canvas.blue_flag=false;
-            }else{
-                item.setChecked(true);
-                my_canvas.blue_flag=true;
-            }
-
         }
         return super.onOptionsItemSelected(item);
     }
